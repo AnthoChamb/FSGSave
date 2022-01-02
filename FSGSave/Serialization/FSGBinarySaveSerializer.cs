@@ -13,6 +13,11 @@ namespace FSGSave
             using (var writer = new EndianBinaryWriter(stream, Encoding.ASCII, Endianness.Big))
             {
                 SerializeSection(writer, value);
+
+                if (value.Length.HasValue && stream.Length < value.Length)
+                {
+                    stream.SetLength(value.Length.Value);
+                }
             }
         }
 
@@ -104,7 +109,9 @@ namespace FSGSave
         {
             using (var reader = new EndianBinaryReader(stream, Encoding.ASCII, Endianness.Big))
             {
-                return DeserializeSection(reader);
+                var section = DeserializeSection(reader);
+                section.Length = stream.Length;
+                return section;
             }
         }
 

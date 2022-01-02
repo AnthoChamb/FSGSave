@@ -18,6 +18,8 @@ namespace FSGSave
 
         public int Version { get; }
 
+        public long? Length { get; set; }
+
         public FSGSaveSection(string name, FSGSession[] sessions, int version)
         {
             Name = name;

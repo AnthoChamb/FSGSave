@@ -36,6 +36,11 @@ namespace FSGSave
             using (var writer = XmlWriter.Create(stream))
             {
                 SerializeSection(writer, value);
+
+                if (value.Length.HasValue && stream.Length < value.Length)
+                {
+                    stream.SetLength(value.Length.Value);
+                }
             }
         }
 
@@ -121,7 +126,9 @@ namespace FSGSave
                             switch (reader.Name)
                             {
                                 case XmlElement.Section:
-                                    return DeserializeSection(reader);
+                                    var section = DeserializeSection(reader);
+                                    section.Length = stream.Length;
+                                    return section;
                             }
                             break;
                     }
