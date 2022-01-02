@@ -6,10 +6,97 @@ namespace FSGSave
 {
     public class FSGBinarySaveSerializer : ISerializer<FSGSaveSection>
     {
+        #region Serialize
+
         public void Serialize(Stream stream, FSGSaveSection value)
         {
-            throw new NotImplementedException();
+            using (var writer = new EndianBinaryWriter(stream, Encoding.ASCII, Endianness.Big))
+            {
+                SerializeSection(writer, value);
+            }
         }
+
+        private void SerializeSection(BinaryWriter writer, FSGSaveSection section)
+        {
+            writer.Write(FSGSaveSection.MagicBytes);
+            writer.Write(0x0100);
+            writer.Write(section.Version);
+
+            var nameBuffer = new byte[FSGSaveSection.NameBufferLength];
+            Encoding.ASCII.GetBytes(section.Name, nameBuffer);
+            writer.Write(nameBuffer);
+            writer.Write(section.SessionCount);
+
+            foreach (var session in section.Sessions)
+            {
+                SerializeSession(writer, session);
+            }
+        }
+
+        private void SerializeSession(BinaryWriter writer, FSGSession session)
+        {
+            writer.Write(FSGSession.MagicBytes);
+            writer.Write(session.Id);
+            writer.Write(session.InstanceId);
+            writer.Write(session.ItemCount);
+            writer.Write(session.ArrayCount);
+
+            foreach (var item in session.Items)
+            {
+                SerializeItem(writer, item);
+            }
+
+            foreach (var array in session.Arrays)
+            {
+                SerializeArray(writer, array);
+            }
+        }
+
+        private void SerializeItem(BinaryWriter writer, FSGItemProperty item)
+        {
+            writer.Write(item.Id);
+            writer.Write((int)item.Type);
+            SerializeValue(writer, item.Type, item.Value);
+        }
+
+        private void SerializeArray(BinaryWriter writer, FSGArrayProperty array)
+        {
+            writer.Write(array.Id);
+            writer.Write((int)array.Type);
+            writer.Write((int)array.ContainedType);
+            writer.Write(array.Count);
+
+            foreach (var value in array.Values)
+            {
+                SerializeValue(writer, array.ContainedType, value);
+            }
+        }
+
+        private void SerializeValue(BinaryWriter writer, FSGPropertyType type, object value)
+        {
+            switch (type)
+            {
+                case FSGPropertyType.Bool:
+                    writer.Write((bool)value);
+                    break;
+                case FSGPropertyType.Int:
+                    writer.Write((int)value);
+                    break;
+                case FSGPropertyType.Uint:
+                    writer.Write((uint)value);
+                    break;
+                case FSGPropertyType.Uint64:
+                    writer.Write((ulong)value);
+                    break;
+                case FSGPropertyType.Float:
+                    writer.Write((float)value);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        #endregion
 
         #region Deserialize
 
