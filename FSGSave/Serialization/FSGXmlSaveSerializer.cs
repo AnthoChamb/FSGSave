@@ -29,7 +29,7 @@ namespace FSGSave
             public const string ContainedType = "ContainedType";
         }
 
-        #region Serialization
+        #region Serialize
 
         public void Serialize(Stream stream, FSGSaveSection value)
         {
@@ -107,9 +107,178 @@ namespace FSGSave
 
         #endregion
 
+        #region Deserialize
+
         public FSGSaveSection Deserialize(Stream stream)
         {
-            throw new NotImplementedException();
+            using (var reader = XmlReader.Create(stream))
+            {
+                while (reader.Read())
+                {
+                    switch (reader.NodeType)
+                    {
+                        case XmlNodeType.Element:
+                            switch (reader.Name)
+                            {
+                                case XmlElement.Section:
+                                    return DeserializeSection(reader);
+                            }
+                            break;
+                    }
+                }
+            }
+
+            return null;
         }
+
+        private FSGSaveSection DeserializeSection(XmlReader reader)
+        {
+            var name = reader.GetAttribute(XmlAttribute.Name);
+            int version = int.TryParse(reader.GetAttribute(XmlAttribute.Version), out version) ? version : 1;
+            int sessionCount = int.TryParse(reader.GetAttribute(XmlAttribute.SessionCount), out sessionCount) ? sessionCount : 0;
+            var sessions = new FSGSession[sessionCount];
+            var i = 0;
+
+            while (i < sessionCount && reader.Read())
+            {
+                switch (reader.NodeType)
+                {
+                    case XmlNodeType.Element:
+                        switch (reader.Name)
+                        {
+                            case XmlElement.Session:
+                                sessions[i++] = DeserializeSession(reader);
+                                break;
+                        }
+                        break;
+                }
+            }
+
+            return new FSGSaveSection(name, sessions, version);
+        }
+
+        private FSGSession DeserializeSession(XmlReader reader)
+        {
+            uint id = uint.TryParse(reader.GetAttribute(XmlAttribute.Id), out id) ? id : 0;
+            uint instanceId = uint.TryParse(reader.GetAttribute(XmlAttribute.InstanceId), out instanceId) ? instanceId : 0;
+            var name = reader.GetAttribute(XmlAttribute.Name);
+            var instanceName = reader.GetAttribute(XmlAttribute.InstanceName);
+            int itemCount = int.TryParse(reader.GetAttribute(XmlAttribute.ItemCount), out itemCount) ? itemCount : 0;
+            int arrayCount = int.TryParse(reader.GetAttribute(XmlAttribute.ArrayCount), out arrayCount) ? arrayCount : 0;
+            var items = new FSGItemProperty[itemCount];
+            var arrays = new FSGArrayProperty[arrayCount];
+            var itemIndex = 0;
+            var arrayIndex = 0;
+
+            while ((itemIndex < itemCount || arrayIndex < arrayCount) && reader.Read())
+            {
+                switch (reader.NodeType)
+                {
+                    case XmlNodeType.Element:
+                        switch (reader.Name)
+                        {
+                            case XmlElement.Property:
+                                if (itemIndex < itemCount)
+                                {
+                                    items[itemIndex++] = DeserializeItem(reader);
+                                }
+                                else
+                                {
+                                    arrays[arrayIndex++] = DeserializeArray(reader);
+                                }
+                                break;
+                        }
+                        break;
+                }
+            }
+
+            return new FSGSession(id, instanceId, items, arrays)
+            {
+                Name = name,
+                InstanceName = instanceName
+            };
+        }
+
+        private FSGItemProperty DeserializeItem(XmlReader reader)
+        {
+            uint id = uint.TryParse(reader.GetAttribute(XmlAttribute.Id), out id) ? id : 0;
+            var name = reader.GetAttribute(XmlAttribute.Name);
+            FSGPropertyType type = Enum.TryParse(reader.GetAttribute(XmlAttribute.Type), out type)
+                ? type : throw new InvalidDataException(Resources.ErrorMessages.InvalidPropertyType);
+            var value = DeserializeValue(reader, type);
+
+            return new FSGItemProperty(id, type, value)
+            {
+                Name = name
+            };
+        }
+
+        private FSGArrayProperty DeserializeArray(XmlReader reader)
+        {
+            if (reader.GetAttribute(XmlAttribute.Type) != FSGPropertyType.Collection.ToString())
+            {
+                throw new InvalidDataException(Resources.ErrorMessages.InvalidPropertyType);
+            }
+
+            uint id = uint.TryParse(reader.GetAttribute(XmlAttribute.Id), out id) ? id : 0;
+            var name = reader.GetAttribute(XmlAttribute.Name);
+            FSGPropertyType containedType = Enum.TryParse(reader.GetAttribute(XmlAttribute.ContainedType), out containedType) 
+                ? containedType : throw new InvalidDataException(Resources.ErrorMessages.InvalidPropertyType);
+            int count = int.TryParse(reader.GetAttribute(XmlAttribute.Count), out count) ? count : 0;
+            var values = new object[count];
+            var i = 0;
+
+            while (i < count && reader.Read())
+            {
+                switch (reader.NodeType)
+                {
+                    case XmlNodeType.Element:
+                        switch (reader.Name)
+                        {
+                            case XmlElement.Value:
+                                values[i++] = DeserializeValue(reader, containedType);
+                                break;
+                        }
+                        break;
+                }
+            }
+
+            return new FSGArrayProperty(id, containedType, values)
+            {
+                Name = name
+            };
+        }
+
+        private object DeserializeValue(XmlReader reader, FSGPropertyType type)
+        {
+            while (reader.Read())
+            {
+                switch (reader.NodeType)
+                {
+                    case XmlNodeType.Text:
+                        switch (type)
+                        {
+                            case FSGPropertyType.Bool:
+                                return bool.TryParse(reader.Value, out var boolValue) ? boolValue : false;
+                            case FSGPropertyType.Int:
+                                return int.TryParse(reader.Value, out var intValue) ? intValue : 0;
+                            case FSGPropertyType.Uint:
+                                return uint.TryParse(reader.Value, out var uintValue) ? uintValue : 0;
+                            case FSGPropertyType.Uint64:
+                                return ulong.TryParse(reader.Value, out var uint64Value) ? uint64Value : 0;
+                            case FSGPropertyType.Float:
+                                return float.TryParse(reader.Value, out var floatValue) ? floatValue : 0.0;
+                            default:
+                                throw new NotImplementedException();
+                        }
+                    case XmlNodeType.EndElement:
+                        throw new InvalidDataException(Resources.ErrorMessages.ValueNotFound);
+                }
+            }
+
+            throw new InvalidDataException(Resources.ErrorMessages.ValueNotFound);
+        }
+
+        #endregion
     }
 }

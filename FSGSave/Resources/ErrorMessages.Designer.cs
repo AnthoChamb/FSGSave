@@ -77,5 +77,14 @@ namespace FSGSave.Resources {
                 return ResourceManager.GetString("InvalidPropertyType", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Could not found value..
+        /// </summary>
+        internal static string ValueNotFound {
+            get {
+                return ResourceManager.GetString("ValueNotFound", resourceCulture);
+            }
+        }
     }
 }

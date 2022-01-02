@@ -123,4 +123,7 @@
   <data name="InvalidPropertyType" xml:space="preserve">
     <value>Invalid property type.</value>
   </data>
+  <data name="ValueNotFound" xml:space="preserve">
+    <value>Could not found value.</value>
+  </data>
 </root>
