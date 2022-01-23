@@ -222,7 +222,7 @@ namespace FSGSave
 
         private FSGArrayProperty DeserializeArray(XmlReader reader)
         {
-            if (reader.GetAttribute(XmlAttribute.Type) != FSGPropertyType.Collection.ToString())
+            if (!Enum.TryParse(reader.GetAttribute(XmlAttribute.Type), out FSGPropertyType type) || type != FSGPropertyType.Collection)
             {
                 throw new InvalidDataException(Resources.ErrorMessages.InvalidPropertyType);
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace FSGSave
@@ -117,8 +118,8 @@ namespace FSGSave
 
         private FSGSaveSection DeserializeSection(BinaryReader reader)
         {
-            var magic = Encoding.ASCII.GetString(reader.ReadBytes(FSGSaveSection.MagicBytes.Length));
-            if (magic != FSGSaveSection.Magic)
+            var magicBuffer = reader.ReadBytes(FSGSaveSection.MagicBytes.Length);
+            if (!magicBuffer.SequenceEqual(FSGSaveSection.MagicBytes))
             {
                 throw new InvalidDataException(Resources.ErrorMessages.InvalidMagic);
             }
@@ -139,8 +140,8 @@ namespace FSGSave
 
         private FSGSession DeserializeSession(BinaryReader reader)
         {
-            var magic = Encoding.ASCII.GetString(reader.ReadBytes(FSGSession.MagicBytes.Length));
-            if (magic != FSGSession.Magic)
+            var magicBuffer = reader.ReadBytes(FSGSession.MagicBytes.Length);
+            if (!magicBuffer.SequenceEqual(FSGSession.MagicBytes))
             {
                 throw new InvalidDataException(Resources.ErrorMessages.InvalidMagic);
             }

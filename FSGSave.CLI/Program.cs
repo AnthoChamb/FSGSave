@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Text;
+using System.Linq;
 
 namespace FSGSave.CLI
 {
@@ -23,7 +23,7 @@ namespace FSGSave.CLI
 
                 ISerializer<FSGSaveSection> inputSerializer, outputSerializer;
 
-                if (Encoding.ASCII.GetString(magicBuffer) == FSGSaveSection.Magic)
+                if (magicBuffer.SequenceEqual(FSGSaveSection.MagicBytes))
                 {
                     inputSerializer = new FSGBinarySaveSerializer();
                     outputSerializer = new FSGXmlSaveSerializer();
