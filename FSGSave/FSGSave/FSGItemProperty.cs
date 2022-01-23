@@ -6,7 +6,7 @@ namespace FSGSave
     {
         public override FSGPropertyType Type { get; }
 
-        public object Value { get; }
+        public object Value { get; set; }
 
         public FSGItemProperty(uint id, FSGPropertyType type, object value)
             : base(id)
