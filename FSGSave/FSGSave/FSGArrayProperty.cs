@@ -1,4 +1,8 @@
-﻿namespace FSGSave
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace FSGSave
 {
     public class FSGArrayProperty : FSGProperty
     {
@@ -19,5 +23,17 @@
 
         public FSGArrayProperty(uint id, FSGPropertyType containedType, int count)
             : this(id, containedType, new object[count]) { }
+        public override bool Equals(object obj)
+        {
+            return obj is FSGArrayProperty array &&
+                Id.Equals(array.Id) &&
+                ContainedType.Equals(array.ContainedType) &&
+                Values.SequenceEqual(array.Values);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, ContainedType, Values);
+        }
     }
 }

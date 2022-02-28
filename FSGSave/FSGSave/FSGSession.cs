@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace FSGSave
 {
@@ -34,5 +37,18 @@ namespace FSGSave
 
         public FSGSession(uint id, uint instanceId, int itemCount, int arrayCount)
             : this(id, instanceId, new FSGItemProperty[itemCount], new FSGArrayProperty[arrayCount]) { }
+        public override bool Equals(object obj)
+        {
+            return obj is FSGSession session &&
+                Id.Equals(session.Id) &&
+                InstanceId.Equals(session.InstanceId) &&
+                Items.SequenceEqual(session.Items) &&
+                Arrays.SequenceEqual(session.Arrays);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, InstanceId, Items, Arrays);
+        }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace FSGSave
+﻿using System;
+using System.Collections.Generic;
+
+namespace FSGSave
 {
     public abstract class FSGProperty
     {
@@ -12,5 +15,9 @@
         {
             Id = id;
         }
+
+        public override abstract bool Equals(object obj);
+
+        public override abstract int GetHashCode();
     }
 }

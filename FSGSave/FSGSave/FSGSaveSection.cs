@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace FSGSave
 {
@@ -31,7 +34,19 @@ namespace FSGSave
 
         public FSGSaveSection(string name, int sessionCount, int version)
             : this(name, new FSGSession[sessionCount], version) { }
+        public override bool Equals(object obj)
+        {
+            return obj is FSGSaveSection save &&
+                Name.Equals(save.Name) &&
+                Sessions.SequenceEqual(save.Sessions) &&
+                Version.Equals(save.Version) &&
+                Length.Equals(save.Length);
+        }
 
         public FSGSaveSection(string name, int sessionCount) : this(name, sessionCount, 1) { }
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, Sessions, Version, Length);
+        }
     }
 }
