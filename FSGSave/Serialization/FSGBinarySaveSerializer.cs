@@ -11,7 +11,7 @@ namespace FSGSave
 
         public void Serialize(Stream stream, FSGSaveSection value)
         {
-            using (var writer = new EndianBinaryWriter(stream, Encoding.ASCII, Endianness.Big))
+            using (var writer = new EndianBinaryWriter(stream, Encoding.ASCII, true, Endianness.Big))
             {
                 SerializeSection(writer, value);
 
@@ -108,7 +108,7 @@ namespace FSGSave
 
         public FSGSaveSection Deserialize(Stream stream)
         {
-            using (var reader = new EndianBinaryReader(stream, Encoding.ASCII, Endianness.Big))
+            using (var reader = new EndianBinaryReader(stream, Encoding.ASCII, true, Endianness.Big))
             {
                 var section = DeserializeSection(reader);
                 section.Length = stream.Length;
