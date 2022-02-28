@@ -37,7 +37,7 @@ namespace FSGSave.CLI
                 var save = inputSerializer.Deserialize(inputStream);
                 var outputFilename = args.Length < 2 || string.IsNullOrWhiteSpace(args[1]) ? DefaultOutputFilename : args[1];
 
-                using (var outputStream = File.OpenWrite(outputFilename))
+                using (var outputStream = File.Create(outputFilename))
                 {
                     outputSerializer.Serialize(outputStream, save);
                 }
