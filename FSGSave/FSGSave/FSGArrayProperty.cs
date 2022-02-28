@@ -10,19 +10,17 @@ namespace FSGSave
 
         public FSGPropertyType ContainedType { get; }
 
-        public object[] Values { get; }
+        public IEnumerable<object> Values { get; set; }
 
-        public int Count { get => Values.Length; }
+        public int Count { get => Values.Count(); }
 
-        public FSGArrayProperty(uint id, FSGPropertyType containedType, object[] values)
+        public FSGArrayProperty(uint id, FSGPropertyType containedType, IEnumerable<object> values)
             : base(id)
         {
             ContainedType = containedType;
             Values = values;
         }
 
-        public FSGArrayProperty(uint id, FSGPropertyType containedType, int count)
-            : this(id, containedType, new object[count]) { }
         public override bool Equals(object obj)
         {
             return obj is FSGArrayProperty array &&

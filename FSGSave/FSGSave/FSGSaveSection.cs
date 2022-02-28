@@ -15,25 +15,21 @@ namespace FSGSave
 
         public const int NameBufferLength = 0x20;
 
-        public FSGSession[] Sessions { get; }
+        public IEnumerable<FSGSession> Sessions { get; set; }
 
-        public int SessionCount { get => Sessions.Length; }
+        public int SessionCount { get => Sessions.Count(); }
 
         public int Version { get; }
 
         public long? Length { get; set; }
 
-        public FSGSaveSection(string name, FSGSession[] sessions, int version)
+        public FSGSaveSection(string name, IEnumerable<FSGSession> sessions, int version)
         {
             Name = name;
             Sessions = sessions;
             Version = version;
         }
 
-        public FSGSaveSection(string name, FSGSession[] sessions) : this(name, sessions, 1) { }
-
-        public FSGSaveSection(string name, int sessionCount, int version)
-            : this(name, new FSGSession[sessionCount], version) { }
         public override bool Equals(object obj)
         {
             return obj is FSGSaveSection save &&
@@ -43,7 +39,6 @@ namespace FSGSave
                 Length.Equals(save.Length);
         }
 
-        public FSGSaveSection(string name, int sessionCount) : this(name, sessionCount, 1) { }
         public override int GetHashCode()
         {
             return HashCode.Combine(Name, Sessions, Version, Length);

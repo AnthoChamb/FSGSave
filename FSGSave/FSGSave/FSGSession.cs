@@ -19,15 +19,15 @@ namespace FSGSave
 
         public string InstanceName { get; set; }
 
-        public FSGItemProperty[] Items { get; }
+        public IEnumerable<FSGItemProperty> Items { get; set; }
 
-        public int ItemCount { get => Items.Length; }
+        public int ItemCount { get => Items.Count(); }
 
-        public FSGArrayProperty[] Arrays { get; }
+        public IEnumerable<FSGArrayProperty> Arrays { get; set; }
 
-        public int ArrayCount { get => Arrays.Length; }
+        public int ArrayCount { get => Arrays.Count(); }
 
-        public FSGSession(uint id, uint instanceId, FSGItemProperty[] items, FSGArrayProperty[] arrays)
+        public FSGSession(uint id, uint instanceId, IEnumerable<FSGItemProperty> items, IEnumerable<FSGArrayProperty> arrays)
         {
             Id = id;
             InstanceId = instanceId;
@@ -35,8 +35,6 @@ namespace FSGSave
             Arrays = arrays;
         }
 
-        public FSGSession(uint id, uint instanceId, int itemCount, int arrayCount)
-            : this(id, instanceId, new FSGItemProperty[itemCount], new FSGArrayProperty[arrayCount]) { }
         public override bool Equals(object obj)
         {
             return obj is FSGSession session &&
