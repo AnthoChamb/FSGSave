@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FSGSave", "FSGSave\FSGSave.csproj", "{E5A8D99F-7409-47DB-8E7B-BFA1D036C9B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FSGSave.CLI", "FSGSave.CLI\FSGSave.CLI.csproj", "{A083066F-3492-49D9-813D-F8397A706B62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FSGSave.CLI", "FSGSave.CLI\FSGSave.CLI.csproj", "{A083066F-3492-49D9-813D-F8397A706B62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FSGSave.Tests", "FSGSave.Tests\FSGSave.Tests.csproj", "{50E65357-5533-4263-8E09-E3AFFCC5F430}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{A083066F-3492-49D9-813D-F8397A706B62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A083066F-3492-49D9-813D-F8397A706B62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A083066F-3492-49D9-813D-F8397A706B62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50E65357-5533-4263-8E09-E3AFFCC5F430}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50E65357-5533-4263-8E09-E3AFFCC5F430}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50E65357-5533-4263-8E09-E3AFFCC5F430}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50E65357-5533-4263-8E09-E3AFFCC5F430}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
